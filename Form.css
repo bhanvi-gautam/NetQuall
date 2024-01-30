@@ -1,0 +1,19 @@
+body{
+    margin: 10px;
+}
+
+button{
+    margin: 10px;
+}
+
+.semester{
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+/* .subject{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: flex-start;
+} */
