@@ -1,0 +1,11 @@
+button{
+    margin: 10px;
+    border: 0.1px solid black;
+    border-radius: 10px;
+}
+
+.semester{
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
