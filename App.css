@@ -1,0 +1,41 @@
+body{
+    --slack-color: #3f0f40;
+    overflow: hidden;
+}
+.app__body{
+    display: flex;
+    height: 100vh;
+}
+
+.app__body h1{
+    flex: 1; /* Expand to fill available space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    background-color: #f0f0f0;
+    padding: 50px;
+}
+.wrapper {
+    display: flex;
+    justify-content:left;
+  }
+  
+  .main-content,
+  .sidebar {
+    border: 3px solid black;
+    padding: 15px;
+    background-color: #fff;
+  }
+  
+  .main-content {
+    width: 90%;
+    height:100%;
+  }
+  
+  .sidebar {
+    width: 40%;
+    height: max-content;
+  }
