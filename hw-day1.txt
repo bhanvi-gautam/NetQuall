@@ -1,0 +1,106 @@
+1. REVERSE AN ARRAY
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    vector<int> arr;
+    int n;
+    cin>>n;
+    for(int i=0;i<n;i++){
+        int temp;
+        cin>>temp;
+        arr.push_back(temp);
+    }
+    //reverse array;(TC and SC also)
+    //swapping first and last elements ->O(N), O(1)
+    for(int i=0,j=n-1;i<j;i++,j--){
+        int temp=arr[i];
+        arr[i]=arr[j];
+        arr[j]=temp;
+    }
+    for(int i=0;i<n;i++){
+        cout<<arr[i]<<" ";
+    }
+    //make a new vector and add as for(i=n-1;i>=0;i--)
+    //->O(N), O(N)
+    
+    
+    return 0;
+}
+
+
+Input : 5    
+	1 2 3 4 5
+
+Output: 5 4 3 2 1
+
+
+2.Given an array A of size N of integers. Your task is to find the sum of minimum and maximum element in the array.
+APPROACHES:
+1. take mini and maxi variables traverse over the array and update them: tc->O(N), sc(1)
+2. sort array and return first and last : tc->O(nlogn), sc(1)
+int findSum(int A[], int N)
+    {
+    	//code here.
+    	int maxi=INT_MIN;
+    	int mini=INT_MAX;
+    	
+    	for(int i=0;i<N;i++){
+    	    maxi=max(maxi,A[i]);
+    	    mini=min(mini,A[i]);
+    	}
+    	
+    	return mini+maxi;
+    	
+    }
+
+3.Given an array arr[] and an integer K where K is smaller than size of array, the task is to find the Kth smallest element in the given array. It is given that all array elements are distinct.
+
+Note :-  l and r denotes the starting and ending index of the array
+
+APPROACHES:
+1. sort array and return (k-1)th element from start
+int kthSmallest(int arr[], int l, int r, int k) {
+        //code here
+        sort(arr,arr+r+1);
+        // for(int i=0;i<=r;i++){
+        //     cout<<arr[i]<<" ";
+        // }
+         return arr[k-1];
+    }
+
+
+4.Given an array of size N containing only 0s, 1s, and 2s; sort the array in ascending order.
+APPROACHES:
+1. sort! -> not allowed
+2. count no of 1s,2s and 0s then either rewrite it or create a new array and put the values there
+3. dutch flag algo -> 3 pointers are used .. low from start and high at end and mid also starting from start.. if mid==0 swap mid++ and low++ .. mid==1 continue ..else swap high-- but mid stays there only  
+ void sort012(int arr[], int n)
+    {
+        // code here 
+        int low=0,mid=0,high=n-1;
+        
+        while(mid<=high){
+            if(arr[mid]==0){
+                swap(arr[mid],arr[low]);
+                low++;
+                mid++;
+                
+                
+            }
+            else if(arr[mid]==2){
+                swap(arr[mid],arr[high]);
+                high--;
+            }
+            else{
+                mid++;
+            }
+        }
+    }
+
+
+5.Move all negative numbers to beginning and positive to end with constant extra space
+APPROACH:
+1. sort negative first positive later
+2. two pointers i and j ,i and j will swap as soon as it encounters negative then i++ , if postive j++;
+3. make a vector of positive integers and negative integers and then append them  
