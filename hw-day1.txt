@@ -28,6 +28,16 @@ int main() {
     return 0;
 }
 
+Javascript
+const arr=[1,2,3,4,5]
+let n=arr.length;
+for(let i=0,j=n-1;i<j;i++,j--){
+    let temp=arr[i];
+    arr[i]=arr[j];
+    arr[j]=temp;
+}
+
+console.log(arr)
 
 Input : 5    
 	1 2 3 4 5
@@ -35,10 +45,13 @@ Input : 5
 Output: 5 4 3 2 1
 
 
+
+
 2.Given an array A of size N of integers. Your task is to find the sum of minimum and maximum element in the array.
 APPROACHES:
 1. take mini and maxi variables traverse over the array and update them: tc->O(N), sc(1)
 2. sort array and return first and last : tc->O(nlogn), sc(1)
+C++
 int findSum(int A[], int N)
     {
     	//code here.
@@ -53,6 +66,15 @@ int findSum(int A[], int N)
     	return mini+maxi;
     	
     }
+Javascript:
+const arr=[1,2,3,4,5]
+let mini=Math.min(...arr);
+let maxi=Math.max(...arr)
+
+console.log(maxi-mini)
+
+
+
 
 3.Given an array arr[] and an integer K where K is smaller than size of array, the task is to find the Kth smallest element in the given array. It is given that all array elements are distinct.
 
@@ -60,6 +82,7 @@ Note :-  l and r denotes the starting and ending index of the array
 
 APPROACHES:
 1. sort array and return (k-1)th element from start
+C++
 int kthSmallest(int arr[], int l, int r, int k) {
         //code here
         sort(arr,arr+r+1);
@@ -68,6 +91,17 @@ int kthSmallest(int arr[], int l, int r, int k) {
         // }
          return arr[k-1];
     }
+
+Javascript:
+const arr=[4,5,3,6,2]
+let k=3
+let n=arr.length;
+arr.sort()
+
+console.log(arr[k-1])
+
+output: 4
+
 
 
 4.Given an array of size N containing only 0s, 1s, and 2s; sort the array in ascending order.
