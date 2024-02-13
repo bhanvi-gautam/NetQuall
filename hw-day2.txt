@@ -1,0 +1,107 @@
+hw-day2
+
+1.
+bool subArrayExists(int arr[], int n)
+    {
+        // //Your code here
+        
+       //use prefix sum
+       unordered_map<int,int> mp;
+       int prefixSum=0;
+       
+       for(int i=0;i<n;i++){
+           prefixSum+=arr[i];
+	//arr[i] ==0 ie even if one of the element is zero 
+//prefix[i]==0 if sum adds up to zero(testcases se pata laga)
+           if(arr[i]==0 || prefixSum==0) return true;
+           if(mp.find(prefixSum)!=mp.end())return true;
+           
+           mp[prefixSum]++;
+       }
+       
+       return false;
+        
+        
+    }
+
+
+2.
+//will not work bcz output is large thus cant control it
+    // long long  fac(int n){
+    //     if(n==1 || n==0) return 1;
+    //     if(n==2) return 2;
+        
+    //     return n*fac(n-1);
+    // }
+    // vector<int> factorial(int N){
+    //     // code here
+    //   long long  factorial=fac(N);
+        
+    //     vector<int> ans;
+        
+    //     while(factorial>0){
+    //         ans.push_back(factorial%10);
+    //         factorial/=10;
+    //     }
+        
+        
+    //     reverse(ans.begin(),ans.end());
+        
+    //     return ans;
+    // }
+    
+    vector<int> factorial(int N){
+        vector<int>res;
+        
+        res.push_back(1);//intialize;
+        for(int i=2;i<=N;i++){
+            int carry=0;
+            for(int j=0;j<res.size();j++){
+                int prod=res[j]*i+carry;
+                res[j]=prod%10;
+                carry=prod/10;
+            }
+            while(carry){
+                res.push_back(carry%10);
+                carry=carry/10;
+            }
+        }
+        reverse(res.begin(),res.end());
+        return res;
+    }
+
+3.
+long long maxProduct(vector<int> arr, int n) {
+	    // code here
+	    
+	    //brute force ->> generate all subarrays via nesting
+	    //i->n
+	    //j= i->n
+	    //k= i->j// subarray O(n^3)
+	    
+	    //or only use i and j and keep a track of prod variable while in j loop ->O(N^2)
+	    
+	    
+	    //OPTIMAL
+	    
+	   // case1: all postives
+	   // case2: even negatives and positives
+	   // case3: odd negatives and rest positives
+	   //prefix or suffix
+	    
+	   long long prefix=1;
+	   long long suffix=1;
+	   long long maxi=INT_MIN;
+	   
+	   for(int i=0,j=n-1;i<n;i++,j--){
+	       prefix*=arr[i];
+	       maxi=max(maxi,prefix);
+	       suffix*=arr[j];
+	       maxi=max(maxi,suffix);
+	       
+	       //if we encounter 0
+	       if(suffix==0) suffix=1;
+	       if(prefix==0) prefix=1;
+	   }
+	   return maxi;
+	}
