@@ -1,0 +1,62 @@
+1.
+string isSubset(int a1[], int a2[], int n, int m) {
+    unordered_map<int,int> mp;
+    for(int i=0;i<n;i++){
+        mp[a1[i]]++;
+    }
+    
+    for(int i=0;i<m;i++){
+        if(mp.find(a2[i])!=mp.end()  && mp[a2[i]] > 0) mp[a2[i]]--;
+        else return "No";
+    }
+    
+    return "Yes";
+    
+}
+
+
+2.
+bool find3Numbers(int a[], int n, int X)
+    {
+        //Your Code Here
+        
+        //nested loop->O(n3)
+        //binary search->O(n2logn)
+        sort(a,a+n);
+        
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                int sum=X-a[i]-a[j];
+                int low=j+1,high=n-1;
+                while(low<=high){
+                    int mid=(low+high)/2;
+                    if(a[mid]==sum) return true;
+                    else if(a[mid]<sum)low=mid+1;
+                    else high=mid-1;
+                }
+            }
+        }
+        return false;
+    }
+
+3.
+  int trap(vector<int>& arr) {
+    int n=arr.size();
+    vector<int> prefix(n,0);
+    vector<int> suffix(n,0);
+    prefix[0]=arr[0];
+    suffix[n-1]=arr[n-1];
+    for(int i=1,j=n-2;i<n;i++,j--){
+        prefix[i]=max(prefix[i-1],arr[i]);
+        suffix[j]=max(suffix[j+1],arr[j]);
+    }
+    
+    int ans=0;
+    
+    for(int i=0;i<n;i++){
+        int temp = min(prefix[i],suffix[i]);
+        // cout<<temp-arr[i]<<" ";
+        if(temp > arr[i]) ans += temp - arr[i];
+    }
+    return ans; 
+    }
