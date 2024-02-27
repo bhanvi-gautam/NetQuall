@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useAddNewPostMutation, useGetOnePostMutation } from './rtk/AddSlice';
+import { useParams,useNavigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
+import CryptoJS from 'crypto-js';
+import { useAddNewPostMutation, useGetOnePostMutation,useDeletePostMutation } from './rtk/AddSlice';
 
 const EditForm = () => {
+    let navigate = useNavigate();
     const { courseId } = useParams();
     const [semArr, setSemArr] = useState([]);
     const [getdata] = useGetOnePostMutation();
     const [updateData] = useAddNewPostMutation();
+    const [deletePost] = useDeletePostMutation();
     const [info, setInfo] = useState(null);
     const [formData, setFormData] = useState(info);
+    const userid=localStorage.getItem('userId');
+    const secretKey = '6d090796-ecdf-11ea-adc1-0242ac112345';
+
+
+    const encryptData = (data) => {
+        const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+        return encryptedData;
+    };
+
+    const decryptData = (encryptedData) => {
+        console.log("temp1===", encryptedData);
+        const decryptedData = CryptoJS.AES.decrypt(encryptedData, secretKey).toString(CryptoJS.enc.Utf8);
+        let decryptedObject;
+        try {
+            decryptedObject = JSON.parse(decryptedData);
+            console.log("decryptedObject==", decryptedObject);
+        } catch (error) {
+            // Handle JSON parsing error if needed
+            console.error('Failed to parse decrypted data:', error);
+            return null;
+        }
+        return decryptedObject;
+    };
 
 
     // console.log(courseId);
@@ -18,11 +45,14 @@ const EditForm = () => {
     const abc = () => {
         getdata(courseId)
             .unwrap()
-            .then((fetchPosts) => {
-                console.log(fetchPosts)
-                setInfo(fetchPosts.data);
-                setFormData(fetchPosts.data)
-                setSemArr(fetchPosts.data.userSemesters)
+            .then((fetchPt) => {
+                console.log("hiiiii--",fetchPt.data)
+                const fetchPosts = decryptData(fetchPt.data)
+                console.log("hie--",fetchPosts)
+
+                setInfo(fetchPosts);
+                setFormData(fetchPosts)
+                setSemArr(fetchPosts.userSemesters)
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -36,6 +66,32 @@ const EditForm = () => {
         console.log("semArr1==", semArr);
     }, [semArr]);
 
+    
+    const deleteItem = async (courseId = 0, semesterId = 0, subjectId = 0) => {
+        try {
+
+            // console.log("courseId==",courseId)
+            // console.log("semesterId==",semesterId)
+            // console.log("subjectId==",subjectId)
+            // return;
+            if (courseId && semesterId && subjectId) {
+                await deletePost({ courseId, semesterId, subjectId }).unwrap()
+                location.reload();
+            }
+            else if (courseId && semesterId) {
+                await deletePost({ courseId, semesterId }).unwrap()
+                location.reload();
+
+            }
+            else {
+                await deletePost({ courseId }).unwrap()
+                location.reload();
+
+            }
+        } catch (error) {
+            console.log("Error deleting data");
+        }
+    }
     const handleSemesterChange = (index, e) => {
         const semester = e.target.value;
         let newArray;
@@ -108,10 +164,11 @@ const EditForm = () => {
                     })
                 }
             }),
-            "userID": 8,
-            "user_Id": 8,
+            "userID": userid,
+            "user_Id": userid,
         };
         await updateData(updatedFormData).unwrap();
+        navigate('/viewCourses')
     }
 
 
@@ -145,7 +202,7 @@ const EditForm = () => {
                                         name="sem"
                                         defaultValue={sem.semesterNo}
                                         onChange={(e) => handleSemesterChange(index1, e)}
-                                    />
+                                    /><CloseIcon onClick={(e)=>deleteItem(courseId,sem.id)}/>
                                 </span>
                                 <br />
                                 <div>
@@ -158,7 +215,7 @@ const EditForm = () => {
                                                     name="subjectName"
                                                     defaultValue={sub.subjectName}
                                                     onChange={(e) => handleSubjectChange(index1, index2, e)}
-                                                />
+                                                /><CloseIcon onClick={(e)=>deleteItem(courseId,sem.id,sub.id)}/>
                                             </span>
                                         </div>
 
