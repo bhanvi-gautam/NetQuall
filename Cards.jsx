@@ -1,28 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {
+  Card,
+  Image,
+  CardContent,
+  CardHeader,
+  CardMeta,
+  CardDescription,
+  Icon,
+} from "semantic-ui-react";
 
 const Cards = ({ image, title, content, link }) => {
   return (
-    <div>
-      <div
-        className="card"
-        style={{ height: "20rem", margin: "20px", width: "15rem" }}
-      >
-        <img
-          src={image}
-          className="card-img-top"
-          alt={title}
-          style={{ height: "10rem" }}
-        />
-        <div className="card-body">
-          <h5 className="card-title">{title}</h5>
-          <p className="card-text">{content}</p>
-          <Link to={link} className="btn btn-primary">
-            Go somewhere
-          </Link>
-        </div>
-      </div>
-    </div>
+    <Card>
+      <Image
+        src={image}
+        wrapped
+        ui={false}
+        // style={{ height: "200px", width: "200px", objectFit: "cover" }}
+      />
+      <CardContent>
+        <CardHeader style={{ fontSize: "20px", fontWeight: "bold" }}>
+          {title}
+        </CardHeader>
+        <CardDescription>{content}</CardDescription>
+      </CardContent>
+      <CardContent extra>
+        <Link to={link}>
+          <Icon name="user" />
+          Go to Next Page
+        </Link>
+      </CardContent>
+    </Card>
   );
 };
 
