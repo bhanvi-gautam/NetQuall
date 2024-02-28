@@ -1,16 +1,43 @@
 import { React, useState } from 'react'
 import { useChangePasswordMutation } from './rtk/AddSlice';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  IconButton,
+  Box,
+  Grid,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const ChangePassword = () => {
     const { email } = useParams();
     const navigate = useNavigate();
-    const [password, setPasssword] = useState('');
-    const [confirmPassword, setConfirmPasssword] = useState('');
+   
     const [sendData] = useChangePasswordMutation();
-    const [errorMessage, setErrorMessage] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [showPassword1, setShowPassword1] = useState(false);
+  
+    const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleClickShowPassword1 = () => {
+    setShowPassword1(!showPassword1);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
 
     const handleSubmit = async (e) => {
@@ -56,48 +83,83 @@ const ChangePassword = () => {
         <div>
             <h1>Form to change password</h1>
             <form onSubmit={handleSubmit}>
-                <div className="form-group row">
-                    <label htmlFor="staticEmail" className="col-sm-2 col-form-label">Email</label>
-                    <div className="col-sm-10">
-                        <input type="text" readOnly className="form-control-plaintext" id="staticEmail" value={email} />
-                    </div>
-                </div>
-                <div className="form-group row">
-                    <label htmlFor="inputPassword" className="col-sm-2 col-form-label" name="password">Password</label>
-                    <div className="col-sm-10">
-                        <input type={showPassword ? "text" : "password"} className="form-control" onChange={(e) => { setPasssword(e.target.value) }} />
-                        <label for="check">Show Password</label>
-                        <input
-                            id="check"
-                            type="checkbox"
-                            value={showPassword}
-                            onChange={() =>
-                                setShowPassword((prev) => !prev)
-                            }
-                        />
-                        <div style={{ color: "red" }}> {errorMessage} </div>
-
-                    </div>
-                </div>
-                <div className="form-group row">
-                    <label htmlFor="inputPassword" className="col-sm-2 col-form-label" name="confirm_password">Confirm Password</label>
-                    <div className="col-sm-10">
-                        <input type={showPassword1 ? "text" : "password"} className="form-control" onChange={(e) => { setConfirmPasssword(e.target.value) }} />
-                        <label for="check">Show Password</label>
-                        <input
-                                type="checkbox"
-                                value={showPassword1}
-                                onChange={() =>
-                                    setShowPassword1((prev) => !prev)
-                                }
-                            />
-                    </div>
-                </div>
-                <div>
-                    <button type="submit" className="btn btn-primary btn-block mb-4">
-                        Change Password
-                    </button>
-                </div>
+                <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              id="email"
+              label="Email"
+              value={email}
+              variant="standard"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              error={errorMessage !== "Password is strong!"}
+              id="password"
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              helperText={errorMessage}
+              variant="standard"
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              error={password !== confirmPassword}
+              id="confirm_password"
+              label="Confirm Password"
+              name="confirm_password"
+              type={showPassword1 ? "text" : "password"}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+              }}
+              helperText={
+                password !== confirmPassword ? "Passwords do not match!" : ""
+              }
+              variant="standard"
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword1}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword1 ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Change Password
+            </Button>
+          </Grid>
+        </Grid>
             </form>
 
         </div>
