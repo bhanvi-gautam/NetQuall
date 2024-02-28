@@ -1,7 +1,15 @@
 import React, { useState } from 'react'
 import { useRegisterMutation, useGetFileIdMutation, useUploadImageMutation } from './rtk/AddSlice';
 import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import { Button, MenuItem, Grid } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Input from "@mui/material/Input";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import CryptoJS from 'crypto-js';
@@ -17,6 +25,15 @@ const AddUser = () => {
     const [value, setValue] = useState(0);
     const [fileName, setFileName] = useState('');
     const[fileUploaded,setFileUploaded]=useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -162,84 +179,118 @@ const AddUser = () => {
                 
                 <p className="info-message">Max size: 5MB</p>
                 
-                <div className="form-outline mb-4">
-                    <input type="text" className="form-control" name="firstName" />
-                    <label className="form-label"  >
-                        First Name
-                    </label>
-                </div>
-                <div className="form-outline mb-4">
-                    <input type="text" className="form-control" name="lastName" />
-                    <label className="form-label"  >
-                        Last Name
-                    </label>
-                </div>
-                <div className="form-outline mb-4">
-                    <input
-                        type="tel"
-                        className="form-control"
-                        name="phnNo"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                    />
-                    <label className="form-label">
-                        Contact Number
-                    </label>
-                </div>
+                <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="firstName"
+              label="First Name"
+              name="firstName"
+              variant="standard"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="lastName"
+              label="Last Name"
+              name="lastName"
+              variant="standard"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="phnNo"
+              label="Contact Number"
+              type="tel"
+              name="phnNo"
+              pattern="[0-9]*"
+              variant="standard"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="roleSelect"
+              select
+              label="What is the Role?"
+              value={value}
+              name="roleSelect"
+              onChange={handleChange}
+              variant="standard"
+              fullWidth
+            >
+              <MenuItem value="Student">Student</MenuItem>
+              <MenuItem value="Teacher">Teacher</MenuItem>
+            </TextField>
+          </Grid>
 
-                <div className="form-outline mb-4">
-                    <select className="form-control" id="roleSelect" name="roleSelect" value={value} onChange={handleChange}>
-                        <option value="Student">Student</option>
-                        <option value="Teacher">Teacher</option>
-                    </select>
-                    <label className="form-label" htmlFor="roleSelect">
-                        What is the Role?
-                    </label>
-                </div>
-
-                <div className="form-outline mb-4">
-                    <input type="text" className="form-control" name="address" />
-                    <label className="form-label"  >
-                        Address
-                    </label>
-                </div>
-                <div className="form-outline mb-4">
-                    <input type="email" className="form-control" name="email" />
-                    <label className="form-label"  >
-                        Email address
-                    </label>
-                </div>
-
-                <div className="form-outline mb-4">
-                    <input
-                        type="password"
-
-                        className="form-control"
-                        name="password"
-                    />
-                    <label className="form-label"   >
-                        Password
-                    </label>
-                </div>
-                <div className="form-outline mb-4">
-                    <input
-                        type="password"
-
-                        className="form-control"
-                        name="confirm_password"
-                    />
-                    <label className="form-label"   >
-                        Confirm Password
-                    </label>
-                </div>
-
-
-                <div>
-                    <button type="submit" className="btn btn-primary btn-block mb-4" >
-                        Add
-
-                    </button>
-                </div>
+          <Grid item xs={12}>
+            <TextField
+              id="address"
+              label="Address"
+              name="address"
+              variant="standard"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="email"
+              label="Email address"
+              name="email"
+              variant="standard"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ m: 1, width: "100%" }} variant="standard">
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ m: 1, width: "100%" }} variant="standard">
+              <InputLabel htmlFor="confirm_password">
+                Confirm Password
+              </InputLabel>
+              <Input
+                id="confirm_password"
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Add
+            </Button>
+          </Grid>
+        </Grid>
 
             </form>
         </div>
