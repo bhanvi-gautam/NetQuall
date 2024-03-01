@@ -36,22 +36,20 @@ const ChangePassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        var lowerCase = /[a-z]/g;
-        var upperCase = /[A-Z]/g;
-        var numbers = /[0-9]/g;
+        
         let checking = 1;
-        if (!password.match(lowerCase)) {
-            checking++;
-            setErrorMessage("Password should contains lowercase letters!");
-        } else if (!password.match(upperCase)) {
-            checking++;
-            setErrorMessage("Password should contain uppercase letters!");
-        } else if (!password.match(numbers)) {
-            checking++;
-            setErrorMessage("Password should contains numbers also!");
-        } else if (password.length < 10) {
-            checking++;
-            setErrorMessage("Password length should be more than 10.");
+        const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMessage(
+        "Password should have at least 6 characters, 1 capital letter, 1 lowercase letter, 1 digit and 1 special character"
+      );
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return false;
+    }
         } else {
             checking = 1;
             setErrorMessage("Password is strong!");
