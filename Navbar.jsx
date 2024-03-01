@@ -1,3 +1,5 @@
+// Admin navbar
+
 import { React, useEffect, useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import { useLoginMutation } from './rtk/AddSlice';
@@ -79,14 +81,23 @@ const Navbar = () => {
 
   return (
     <div>
-      <nav className="navbar navbar-dark bg-dark sticky-top ">
-  <div className="container-fluid">
-    <Link className="navbar-brand" to={'/'}>Learning Management System</Link>
-    <div className="d-flex" style={{ color: 'white', display:'flex', alignItems:'center' }}>
-      <span>Hello, {capitalize(firstName)} {capitalize(lastName)}!</span>
-      <Link  to={'/settings'}><Avatar alt="Welcome" src={image ? `http://localhost:3003/images/${image}` : dummyProfile} /></Link>
-      <button className="btn btn-outline-primary" onClick={logout}>Logout</button>
-    </div>
+     <nav className="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
+        <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">
+       
+    <Link className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+             to={'/'}>Hello, {capitalize(firstName)} {capitalize(lastName)}!</Link>
+    
+     
+                      <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
+
+            <button className="text-white text-sm uppercase hidden lg:inline-block font-semibold" onClick={logout}>
+              Logout
+            </button>
+ </form>
+     <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
+             <Link  to={'/settings'}><Avatar alt="Welcome" src={image ? `http://localhost:3003/images/${image}` : dummyProfile} /></Link>
+          </ul>
+    
   </div>
 </nav>
     </div>
