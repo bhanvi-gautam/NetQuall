@@ -1,0 +1,138 @@
+import { React, useState } from "react";
+import { useChangePasswordMutation } from "../../components/rtk/AddSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import backgroundImage from "../../assets/img/register_bg_2.png";
+import { encryptData, decryptData } from "../../assets/security/encryDecrypt";
+// import backgroundImage from "../../assets";
+
+const ResetPassword = () => {
+  const { emailid } = useParams();
+  const navigate = useNavigate();
+
+  const [sendData] = useChangePasswordMutation();
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  // const email = decryptData(emailid);
+  const email = emailid;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let checking = 1;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMessage(
+        "Password should have at least 6 characters, 1 capital letter, 1 lowercase letter, 1 digit and 1 special character"
+      );
+      return false;
+    } else if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return false;
+    } else {
+      checking = 1;
+      setErrorMessage("Password is strong!");
+    }
+
+    if (checking === 1) {
+      let flag;
+      const data = { email: email, password: password };
+      const encryptedData = encryptData(data);
+      flag = await sendData({ data: encryptedData }).unwrap();
+
+      if (flag) {
+        navigate("/login");
+      }
+    }
+  };
+  const myStyle = {
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${backgroundImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    height: "100vh", // This will cover the full height of the viewport
+    width: "100vw",
+  };
+
+  return (
+    <div className="container mx-auto px-4 h-full" style={myStyle}>
+      <div className="flex content-center items-center justify-center h-full">
+        <div className="w-full lg:w-4/12 px-4">
+          <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
+            <div className="rounded-t mb-0 px-6 py-6">
+              <div className="text-center mb-3">
+                <h1 className="text-blueGray-500 text-lg font-bold">
+                  Reset Password
+                </h1>
+              </div>
+            </div>
+            <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+              <form onSubmit={handleSubmit}>
+                <div className="relative w-full mb-3">
+                  <label
+                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                    htmlFor="password"
+                  >
+                    New Password
+                  </label>
+
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="New Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <div className="relative w-full mb-3">
+                  <label
+                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                    htmlFor="confirmPassword"
+                  >
+                    Confirm Password
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      id="customCheckLogin"
+                      type="checkbox"
+                      className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                      checked={showPassword}
+                      onChange={() => setShowPassword(!showPassword)}
+                    />
+                    <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                      Show Password
+                    </span>
+                  </label>
+                </div>
+                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+                <div className="text-center mt-6">
+                  <button
+                    className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                    type="submit"
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default ResetPassword;
