@@ -1,0 +1,221 @@
+import { Box, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useGetOneQuizMutation } from "../rtk/AddSlice";
+import { decryptData, encryptData } from "../../assets/security/encryDecrypt";
+import PostDetailsShimmer from "../Effects/PostDetailsShimmer";
+
+const EditQuiz = () => {
+  const quizId = useParams();
+  const [getData, { isLoading, isSuccess, post }] = useGetOneQuizMutation();
+  const [posts, setPosts] = useState(post);
+  const [quizData, setQuizData] = useState(post);
+  const getQuiz = async () => {
+    const encryptedId = encryptData(quizId);
+    await getData({ id: encryptedId }).then((data) => {
+      const temp = decryptData(data.data.encryptedData);
+      setPosts(temp);
+      setQuizData(temp);
+    });
+  };
+  useEffect(() => {
+    getQuiz();
+  }, []);
+
+  console.log("quizData", quizData);
+
+  const handleQuestionTypeChange = (value, qIndex) => {
+    if (quizData) {
+      const updatedQuizData = { ...quizData };
+      updatedQuizData.quizQuestions[qIndex].question_type = value;
+      setQuizData(updatedQuizData);
+    }
+  };
+
+  const handleInputChange = (value, qIndex, oIndex) => {
+    if (quizData) {
+      console.log("value :>> ", value);
+      const updatedQuizData = { ...quizData };
+      if (value !== "" || value == undefined) {
+        console.log("value :>> ", value);
+        if (oIndex === undefined) {
+          updatedQuizData.quizQuestions[qIndex].question = value;
+        } else {
+          updatedQuizData.quizQuestions[qIndex].quizOptions[
+            oIndex
+          ].option_text = value;
+        }
+      } else {
+        console.log(
+          "updatedQuizData.quizQuestions[qIndex].question_type :>> ",
+          updatedQuizData.quizQuestions[qIndex].question_type
+        );
+        if (!updatedQuizData.quizQuestions[qIndex].question_type) {
+          // Checkbox
+          // updatedQuizData.quizQuestions[qIndex].quizOptions =
+          updatedQuizData.quizQuestions[qIndex].quizOptions.map(
+            (option, index) => {
+              console.log("index :>> ", index);
+              console.log("oIndex :>> ", oIndex);
+              if (index === oIndex) {
+                option.is_correct = !option.is_correct;
+              }
+              return option;
+            }
+          );
+        } else {
+          // Radio button
+          updatedQuizData.quizQuestions[qIndex].quizOptions =
+            updatedQuizData.quizQuestions[qIndex].quizOptions.map(
+              (option, index) => {
+                option.is_correct = index === oIndex;
+                return option;
+              }
+            );
+        }
+      }
+      console.log("updatedQuizData", updatedQuizData);
+      setQuizData(updatedQuizData);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Edited quiz:", quizData);
+  };
+
+  useEffect(() => {}, [quizData]);
+  return (
+    <Box className="w-full mb-12">
+      <Box
+        className="relative md:pt-30 pb-32 pt-12"
+        style={{ backgroundColor: "#0099CC" }}
+      >
+        <Box
+          className="px-4"
+          sx={{
+            color: "white",
+            width: "100%",
+            position: "absolute",
+            bottom: 0,
+          }}
+        >
+          <Typography gutterBottom variant="h4" component="div">
+            Edit Quiz
+          </Typography>
+        </Box>
+      </Box>
+      {isLoading && <PostDetailsShimmer />}
+      {isSuccess && (
+        <div className="flex-auto px-4 lg:px-10 py-10 pt-10">
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-wrap">
+              <div className="w-full lg:w-12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-blueGray-600 text-s font-bold mb-2or SAP Deployment activities.">
+                    Quiz Name:
+                  </label>
+                  <input
+                    type="text"
+                    defaultValue={quizData?.quizName}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            {quizData?.quizQuestions?.map((question, qIndex) => (
+              <div className="flex flex-wrap" key={qIndex}>
+                <div className="w-full lg:w-12 px-4">
+                  <div className="relative w-full mb-3">
+                    <label className="block uppercase text-blueGray-600 text-s font-bold mb-2">
+                      Question {qIndex + 1}:
+                      <input
+                        type="text"
+                        name={`question_${qIndex}`}
+                        defaultValue={question.question}
+                        onChange={(e) =>
+                          handleInputChange(e.target.value, qIndex)
+                        }
+                        className="border-0 px-3 py-3 mt-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        required
+                      />
+                    </label>
+                    {question?.quizOptions?.map((option, oIndex) => (
+                      <div
+                        style={{ display: "flex", alignItems: "center" }}
+                        key={oIndex}
+                      >
+                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                          Option {oIndex + 1}:
+                          <input
+                            type="text"
+                            name={`option_${qIndex}_${oIndex}`}
+                            defaultValue={option.option_text}
+                            onChange={(e) =>
+                              handleInputChange(e.target.value, qIndex, oIndex)
+                            }
+                            className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            required
+                          />
+                        </label>
+                        <input
+                          type={question.question_type ? "checkbox" : "radio"}
+                          name={
+                            question.question_type
+                              ? `option_${qIndex}`
+                              : `option_${qIndex}_${oIndex}`
+                          }
+                          defaultValue={option.id}
+                          checked={option.is_correct}
+                          onChange={() =>
+                            handleInputChange(undefined, qIndex, oIndex)
+                          }
+                          style={{ marginLeft: "20px" }}
+                        />
+                      </div>
+                    ))}
+                    <label className="block uppercase text-blueGray-600 text-xs font-bold m-4">
+                      Multiple Answers:
+                      <input
+                        type="checkbox"
+                        checked={question.question_type}
+                        onChange={(e) =>
+                          handleQuestionTypeChange(e.target.checked, qIndex)
+                        }
+                      />
+                    </label>
+                    <label className="block uppercase text-blueGray-600 text-xs font-bold mb-6 mt-5">
+                      Marks:
+                      <input
+                        type="number"
+                        name={`marks_${qIndex}`}
+                        defaultValue={question.question_marks}
+                        onChange={(e) =>
+                          handleInputChange(e.target.value, qIndex)
+                        }
+                        className="border-0 px-3 py-3 mt-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        required
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <p>Total Marks: {quizData?.quiz_marks}</p>
+            <Button type="submit">Submit Quiz</Button>
+          </form>
+        </div>
+      )}
+    </Box>
+  );
+};
+
+export default EditQuiz;
+// now do the following and show the steps and where you are making changes .. no need to write the whole code , only write part which has changes ..
+// 1. question text and question option's text can be changed .. and if user changes value to empty string then take the original value in array only . store the updated data(along with prev data in case of empty string) and submit it for updation
+// 2. multianswer checkbox value can be changed , that is user can switch from radio to checkbox and vice-versa, make sure to show changes on screen dynamically .
+// 3. similarly correct answers can also edit .. take care of proper functionality of checkbox and radio button , radio means single option select and checkbox means multi can be selected
+
+// also now the error is coming as "quizData is not iterable"
